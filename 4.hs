@@ -1,5 +1,6 @@
 
 import qualified Data.Set as Set
+import Data.List
 
 input = ["nyot babgr babgr kqtu kqtu kzshonp ylyk psqk", 
         "iix ewj rojvbkk phrij iix zuajnk tadv givslju ewj bda", 
@@ -538,6 +539,16 @@ nubOrd xs = go Set.empty xs where
 valid :: String -> Bool
 valid s = (length $ words s) == (length . nubOrd $ words s)
 
+star1 = length $ filter valid input
 
- 
-main = print $ length $ filter valid input
+-- STAR 2
+-- For added security, yet another system policy has been put in place. Now, a valid passphrase must contain no two words that are anagrams of each other - that is, a passphrase is invalid if any word's letters can be rearranged to form any other word in the passphrase.
+-- Under this new system policy, how many passphrases are valid?
+
+validStrict :: String -> Bool
+validStrict s = (length $ words s) == (length . nubOrd $ map sort (words s))
+
+star2 = length $ filter validStrict input
+
+
+main = print $ star2
