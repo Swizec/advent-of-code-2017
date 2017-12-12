@@ -1036,10 +1036,13 @@ input = [line.split(" if ") for line in input]
 
 # Star 1
 regs = {}
+maxest = None # Star 2
 for operation, condition in input:
-    print regs, operation, condition
     if check(regs, condition):
         regs = interpret(regs, operation)
 
-print regs
+    if maxest == None or maxest < max(regs.values()):
+        maxest = max(regs.values())
+    
 print max(regs.values())
+print maxest
