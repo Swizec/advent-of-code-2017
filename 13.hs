@@ -59,4 +59,17 @@ severity (depth, range)
     | mod depth (range*2-2) == 0 = depth * range
     | otherwise = 0
 
-main = print $ sum $ map severity $ prepInput input
+smallestDelay::[(Int, Int)] -> Int
+smallestDelay input
+    | sum severities == 0 = delay
+    | otherwise = smallestDelay $ map (\(a,b) -> (a+1, b)) input
+    where severities = map severity input
+          (delay, _) = head input
+
+star1::[String] -> Int
+star1 input = sum $ map severity $ prepInput input
+
+star2::[String] -> Int
+star2 input = smallestDelay $ prepInput input
+
+main = print $ star2 input
