@@ -2029,5 +2029,30 @@ def star1(group0, input):
                     group0.add(id)
     return len(group0)
 
+### STAR 2 ###
+# Idea: Assume each program is its own group, merge groups as long as connections exist
+# Then count groups
+def star2(input):
+    groups = {}
 
-print star1(Set(["0"]), input)
+    for row in input.split("\n"):
+        if len(row) < 4:
+            continue
+        
+        id, connects = row.split(" <-> ")
+
+        groups[id] = Set()
+
+    for row in input.split("\n"):
+        if len(row) < 4:
+            continue
+        
+        id, connects = row.split(" <-> ")
+        connects = connects.split(", ")
+
+        for c in connects:
+            groups[c].add(id)
+    
+
+#print star1(Set(["0"]), input)
+print star2(input)
