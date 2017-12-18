@@ -38,7 +38,14 @@ function countMatches({
     return judge;
 }
 
-// console.log(countMatches({ startA: 591, startB: 393, generator: star1generator, sampleSize: 40000000 }));
+console.log(
+    countMatches({
+        startA: 591,
+        startB: 393,
+        generator: star1generator,
+        sampleSize: 40000000
+    })
+);
 
 console.log(
     countMatches({
