@@ -75,7 +75,8 @@ function execute(registers, command) {
         }
     }
 
-    let jumped = false;
+    let jumped = false,
+        kill = false;
 
     const commands = {
         snd: a => registers.set("sound", getVal(a)),
@@ -85,6 +86,7 @@ function execute(registers, command) {
         mod: (a, b) => registers.set(a, getVal(a) % getVal(b)),
         rcv: a => (
             console.log("SOUND:", getVal("sound")),
+            (kill = true),
             registers.set(a, getVal("sound"))
         ),
         jgz: (a, b) =>
@@ -100,20 +102,27 @@ function execute(registers, command) {
         registers.set("pointer", getVal("pointer") + 1);
     }
 
-    return registers;
+    return [kill, registers];
 }
 
 function star1() {
-    let registers = initRegisters();
+    let registers = initRegisters(),
+        kill = false;
     const program = input.split("\n").filter(command => command.length > 0);
 
     // find sound value at first non-zero rcv
     while (
         registers.get("pointer") >= 0 &&
-        registers.get("pointer") < program.length
+        registers.get("pointer") < program.length &&
+        !kill
     ) {
-        registers = execute(registers, program[registers.get("pointer")]);
+        [kill, registers] = execute(
+            registers,
+            program[registers.get("pointer")]
+        );
     }
 }
+
+// Message queue between the two programs 🤔
 
 star1();
