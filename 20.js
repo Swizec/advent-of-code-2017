@@ -3,6 +3,13 @@ p=<3,0,0>, v=<2,0,0>, a=<-1,0,0>
 p=<4,0,0>, v=<0,0,0>, a=<-2,0,0>
 `;
 
+const test_input2 = `
+p=<-6,0,0>, v=<3,0,0>, a=<0,0,0>    
+p=<-4,0,0>, v=<2,0,0>, a=<0,0,0>
+p=<-2,0,0>, v=<1,0,0>, a=<0,0,0>
+p=<3,0,0>, v=<-1,0,0>, a=<0,0,0>
+`;
+
 const input = `
 p=<2366,784,-597>, v=<-12,-41,50>, a=<-5,1,-2>
 p=<-2926,-3402,-2809>, v=<-55,65,-16>, a=<11,4,8>
@@ -1006,6 +1013,27 @@ p=<992,1365,-2469>, v=<150,192,-352>, a=<-12,-12,30>
 p=<-2241,1405,-737>, v=<-318,200,-100>, a=<23,-14,7>
 `;
 
+function prepInput(input) {
+    let particles = input
+        .split("\n")
+        .filter(line => line.length > 0)
+        .map(line => ({
+            p: line
+                .match(/p=<(-{0,1}\d+),(-{0,1}\d+),(-{0,1}\d+)>/)
+                .slice(1)
+                .map(Number),
+            v: line
+                .match(/v=<(-{0,1}\d+),(-{0,1}\d+),(-{0,1}\d+)>/)
+                .slice(1)
+                .map(Number),
+            a: line
+                .match(/a=<(-{0,1}\d+),(-{0,1}\d+),(-{0,1}\d+)>/)
+                .slice(1)
+                .map(Number)
+        }));
+    return particles;
+}
+
 function tick(particles) {
     return particles.map(({ p, v, a }) => {
         v = v.map((n, i) => n + a[i]);
@@ -1014,6 +1042,21 @@ function tick(particles) {
             v: v,
             a: a
         };
+    });
+}
+
+function collision(particles) {
+    return particles.map((particle, idx) => {
+        const { p: [x, y, z] } = particle;
+
+        if (
+            particles.find(
+                ({ p }, i) => i !== idx && p[0] == x && p[1] == y && p[2] == z
+            )
+        ) {
+            particle.dead = true;
+        }
+        return particle;
     });
 }
 
@@ -1032,23 +1075,7 @@ function closest(particles) {
 }
 
 function star1(input) {
-    let particles = input
-        .split("\n")
-        .filter(line => line.length > 0)
-        .map(line => ({
-            p: line
-                .match(/p=<(-{0,1}\d+),(-{0,1}\d+),(-{0,1}\d+)>/)
-                .slice(1)
-                .map(Number),
-            v: line
-                .match(/v=<(-{0,1}\d+),(-{0,1}\d+),(-{0,1}\d+)>/)
-                .slice(1)
-                .map(Number),
-            a: line
-                .match(/a=<(-{0,1}\d+),(-{0,1}\d+),(-{0,1}\d+)>/)
-                .slice(1)
-                .map(Number)
-        }));
+    let particles = prepInput(input);
 
     let stable = {
         min: 0,
@@ -1074,4 +1101,27 @@ function star1(input) {
     console.log(particles[stable.index], distance(particles[stable.index]));
 }
 
-star1(input);
+function star2(input) {
+    let particles = prepInput(input);
+
+    let stable = {
+        length: particles.length,
+        iterations_unchanged: 0
+    };
+
+    while (stable.iterations_unchanged < 2000) {
+        particles = collision(tick(particles)).filter(({ dead }) => !dead);
+
+        if (stable.length === particles.length) {
+            stable.iterations_unchanged += 1;
+        } else {
+            stable.length = particles.length;
+            stable.iterations_unchanged = 0;
+        }
+    }
+
+    console.log(stable);
+}
+
+//star1(input);
+star2(input);
