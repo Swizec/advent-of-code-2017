@@ -78,8 +78,8 @@ class Day22 extends Component {
             }
             return a;
         }),
-        x: Width / 2 + offset,
-        y: Width / 2 - offset,
+        x: Math.floor(Width / 2) + offset,
+        y: Math.floor(Width / 2) - offset,
         vx: 0,
         vy: -1,
         bursts: 0,
@@ -118,7 +118,7 @@ class Day22 extends Component {
             infected,
             bursts: bursts + 1
         });
-        if (bursts < 10000) {
+        if (bursts + 1 < 10000) {
             requestAnimationFrame(() => this.burstActivity());
         }
     }
