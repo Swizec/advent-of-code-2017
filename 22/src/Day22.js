@@ -30,11 +30,14 @@ const input = `
     .split("\n")
     .filter(row => row.length > 0);
 
-const GridRow = ({ row }) =>
+const GridRow = ({ row, x, y, ry }) =>
     row.map((cell, i) => (
         <div
             style={{
-                background: cell === "#" ? "black" : "white",
+                background:
+                    y === ry && x === i
+                        ? "red"
+                        : cell === "#" ? "black" : "white",
                 width: "5px",
                 height: "5px",
                 display: "inline-block"
@@ -45,28 +48,38 @@ const GridRow = ({ row }) =>
         </div>
     ));
 
-const Grid = ({ grid }) =>
+const Grid = ({ grid, x, y }) =>
     grid.map((row, i) => (
         <div key={i} style={{ display: "flex", justifyContent: "center" }}>
-            <GridRow row={row} />
+            <GridRow row={row} x={x} y={y} ry={i} />
         </div>
     ));
 
-const Width = 80;
+const Width = 180,
+    offset = 23;
 
 class Day22 extends Component {
     state = {
         grid: new Array(Width).fill(".").map((_, i) => {
-            let row = i > Width / 2 ? input[i - Width / 2] : null;
+            let row =
+                i > Math.floor(Width / 2 - input.length / 2 - offset)
+                    ? input[
+                          i - Math.floor(Width / 2 - input.length / 2 - offset)
+                      ]
+                    : null;
 
             let a = new Array(Width).fill(".");
             if (row) {
-                a.splice(Width / 2 - row.length / 2, row.lengt, ...row);
+                a.splice(
+                    Width / 2 - row.length / 2 + offset,
+                    row.length,
+                    ...row
+                );
             }
             return a;
         }),
-        x: Width / 2,
-        y: Width / 2,
+        x: Width / 2 + offset,
+        y: Width / 2 - offset,
         vx: 0,
         vy: -1,
         bursts: 0,
@@ -90,6 +103,10 @@ class Day22 extends Component {
             infected += 1;
 
             [vx, vy] = this.turnRight(vx, vy);
+        }
+
+        if (Math.abs(vx) > 1 || Math.abs(vy) > 1) {
+            console.log("JUMP", vx, vy);
         }
 
         this.setState({
@@ -126,7 +143,9 @@ class Day22 extends Component {
                 <h3 style={{ display: "flex", justifyContent: "center" }}>
                     bursts: {bursts}, pos: ({x}, {y}), infected: {infected}
                 </h3>
-                <Grid grid={grid} />
+                <div style={{ border: "1px solid red" }}>
+                    <Grid grid={grid} x={x} y={y} />
+                </div>
             </div>
         );
     }
