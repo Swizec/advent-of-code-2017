@@ -97,12 +97,12 @@ class Day22 extends Component {
         if (grid[y][x] === "#") {
             grid[y][x] = ".";
 
-            [vx, vy] = this.turnLeft(vx, vy);
+            [vx, vy] = this.turnRight(vx, vy);
         } else {
             grid[y][x] = "#";
             infected += 1;
 
-            [vx, vy] = this.turnRight(vx, vy);
+            [vx, vy] = this.turnLeft(vx, vy);
         }
 
         if (Math.abs(vx) > 1 || Math.abs(vy) > 1) {
